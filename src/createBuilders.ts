@@ -1,24 +1,3 @@
-// 使用例：
-const routes = {
-    path: '/{locale}',
-    children: {
-        me: { path: '/me' },
-        catalogs: {
-            path: '/catalogs',
-            children: {
-                item: {
-                    path: '/{catalogId}',
-                    children: {
-                        library: {
-                            path: '/library/{libraryId}',
-                        },
-                    },
-                },
-            },
-        },
-    },
-} as const;
-
 type ExtractPathParams<T extends string> = string extends T
     ? never
     : T extends `${infer Start}/{${infer Param}}${infer Rest}`
@@ -61,6 +40,16 @@ export function createBuilders<T extends RouteDefinition>(
         const result: Record<string, any> = {
             $path: ((params: Record<string, string> = {}) => {
                 let path = fullPath;
+                const requiredParams = Array.from(
+                    path.matchAll(/\{(\w+)\}/g)
+                ).map((match) => match[1]);
+
+                for (const param of requiredParams) {
+                    if (!(param in params)) {
+                        throw new Error(`Missing required parameter: ${param}`);
+                    }
+                }
+
                 Object.entries(params).forEach(([key, value]) => {
                     path = path.replace(`{${key}}`, value);
                 });
@@ -79,13 +68,3 @@ export function createBuilders<T extends RouteDefinition>(
 
     return createBuilder(routes) as BuildersType<T>;
 }
-
-const builders = createBuilders(routes);
-const base = builders.$path({ locale: 'ja' });
-const me = builders.me.$path({ locale: 'ja' });
-const library = builders.catalogs.item.library.$path({
-    catalogId: 'catalogId',
-    libraryId: 'libraryId',
-    locale: 'ja',
-});
-console.log({ base, me, library });
