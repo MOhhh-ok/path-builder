@@ -1,4 +1,17 @@
-function createBuilders(routes: any): any {}
+# Path builder
+
+This is a builder for path. Type safe.
+
+## Install
+
+```
+npm i @masa-dev/path-builder
+```
+
+## Usage
+
+```ts
+import {createBuilders} from '@masa-dev/path-builder';
 
 const routes = {
     path: '/{locale}',
@@ -30,3 +43,8 @@ const library = builders.catalogs.item.library.$path({
 }); // => '/ja/catalogs/catalogId/library/libraryId/edit'
 
 console.log({ base, library });
+```
+
+## License
+
+MIT
