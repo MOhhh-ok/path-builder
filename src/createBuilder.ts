@@ -11,11 +11,14 @@ type Params<T extends string> = {
 
 // ビルダークラス
 class UrlBuilder<T extends string> {
-    constructor(private template: T) {}
+    #template: T;
 
-    // generateをbuildに変更
+    constructor(template: T) {
+        this.#template = template;
+    }
+
     build(params: Params<T>): string {
-        return this.template.replace(/{([^}]+)}/g, (_, key: keyof Params<T>) =>
+        return this.#template.replace(/{([^}]+)}/g, (_, key: keyof Params<T>) =>
             encodeURIComponent(params[key])
         );
     }
