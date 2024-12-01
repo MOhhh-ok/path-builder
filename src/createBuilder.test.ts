@@ -39,4 +39,15 @@ describe('createBuilder', () => {
         });
         expect(result).toBe('/ja/users/%E5%B1%B1%E7%94%B0%E5%A4%AA%E9%83%8E');
     });
+
+    test('テンプレートに定義されていない余分なパラメータは無視される', () => {
+        const params = {
+            name: 'John',
+            age: 30, // テンプレートには定義されていないパラメータ
+            country: 'Japan', // テンプレートには定義されていないパラメータ
+        };
+        const builder = createBuilder('/users/{name}');
+        const result = builder.build(params);
+        expect(result).toBe('/users/John');
+    });
 });
